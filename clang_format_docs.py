@@ -32,6 +32,7 @@ class CodeBlockError(NamedTuple):
 
 def get_clang_format_path() -> str:
     path = shutil.which('clang-format')
+
     if path is None:
         msg = (
             'Unable to find clang-format. Make sure clang-format is '
@@ -50,11 +51,12 @@ def clang_format_str(code: str, style: str = 'Microsoft') -> str:
         f.file.write(code)
         f.file.close()
         res = sp.check_output([clang_format, f'--style={style}', f.name])
+
     return res.decode()
 
 
 def format_str(
-    src: str,
+    src: str, style: str = 'Microsoft',
 ) -> tuple[str, Sequence[CodeBlockError]]:
 
     errors: list[CodeBlockError] = []
@@ -69,7 +71,7 @@ def format_str(
     def _md_match(match: Match[str]) -> str:
         code = textwrap.dedent(match['code'])
         with _collect_error(match):
-            code = clang_format_str(code)
+            code = clang_format_str(code, style)
         code = textwrap.indent(code, match['indent'])
         return f'{match["before"]}{code}{match["after"]}'
 
@@ -80,11 +82,12 @@ def format_str(
 def format_file(
     filename: str,
     skip_errors: bool,
+    style: str = 'Microsoft',
 ) -> int:
     with open(filename, encoding='UTF-8') as f:
         contents = f.read()
-    new_contents, errors = format_str(contents)
-    print(contents, new_contents)
+    new_contents, errors = format_str(contents, style)
+
     for error in errors:
         lineno = contents[: error.offset].count('\n') + 1
         print(f'{filename}:{lineno}: code block parse error {error.exc}')
@@ -103,11 +106,30 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('-E', '--skip-errors', action='store_true')
     parser.add_argument('filenames', nargs='*')
+    parser.add_argument(
+        '--style', type=str, default='Microsoft', help=(
+            textwrap.dedent("""
+        Coding style, currently supports:
+            LLVM, GNU, Google, Chromium, Microsoft (default), Mozilla, WebKit.
+        Use -style=file to load style configuration from
+        .clang-format file located in one of the parent
+        directories of the source file (or current
+        directory for stdin).
+        Use -style=file:<format_file_path> to explicitly specify
+        the configuration file.
+        Use -style="{key: value, ...}" to set specific
+        parameters, e.g.:
+            -style="{BasedOnStyle: llvm, IndentWidth: 8}"
+        """)
+        ),
+    )
     args = parser.parse_args(argv)
 
     retv = 0
     for filename in args.filenames:
-        retv |= format_file(filename, skip_errors=args.skip_errors)
+        retv |= format_file(
+            filename, skip_errors=args.skip_errors, style=args.style,
+        )
     return retv
 
 
