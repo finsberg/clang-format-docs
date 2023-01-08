@@ -2,7 +2,7 @@ clang-format-docs
 =================
 
 Run `clang-format` on C++ code blocks in documentation files.
-This project is derivative work of [`blacken-docs`](https://github.com/adamchainz/blacken-docs).
+This project is derivative work of [`blacken-docs`](https://github.com/adamchainz/blacken-docs). License from `blacken-docs` is included in [LICENSE_blacken_docs](LICENSE_blacken_docs)
 
 
 ## install
