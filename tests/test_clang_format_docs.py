@@ -64,6 +64,22 @@ def test_format_src_simple():
     )
 
 
+def test_cpp_lexer():
+    before = (
+        '```cpp\n'
+        'void f (1,2,3){}\n'
+        '```\n'
+    )
+    after, _ = clang_format_docs.format_str(before)
+    assert after == (
+        '```cpp\n'
+        'void f(1, 2, 3)\n'
+        '{\n'
+        '}\n'
+        '```\n'
+    )
+
+
 def test_clang_format_not_found_raises_RuntimeError():
     with mock.patch.object(clang_format_docs.shutil, 'which') as m:
         m.return_value = None
