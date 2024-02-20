@@ -19,7 +19,7 @@ pip install clang-format-docs
 ```markdown
     ```c++
     void hello(){
-        std::cout << "Hello world\n"
+        std::cout << "Hello world\n";
     }
     ```
 ```
@@ -34,7 +34,7 @@ clang-format-docs --style=LLVM file.md
 ```
 or using a clang-format config file
 ```
-clang-format-docs -style=file:my_clang_format.txt file.md
+clang-format-docs --style=file:my_clang_format.txt file.md
 ```
 
 
@@ -47,7 +47,7 @@ Sample `.pre-commit-config.yaml`:
 
 ```yaml
 -   repo: https://github.com/finsberg/clang-format-docs
-    rev: v0.2.1
+    rev: v0.3.0
     hooks:
     -   id: clang-format-docs
         additional_dependencies: [clang-format==14.0.6]
