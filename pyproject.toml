@@ -1,0 +1,92 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clang_format_docs"
+version = "0.3.0"
+description = "Run `clang-format` on C++ code blocks in documentation files"
+authors = [{name = "Henrik Finsberg", email = "henriknf@simula.no"}]
+license = {text = "MIT"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+requires-python = ">=3.9"
+dependencies = ["clang-format"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://github.com/finsberg/clang-format-docs"
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "ipython",
+    "pdbpp",
+    "pre-commit",
+    "twine",
+    "wheel",
+]
+test = [
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+]
+
+[project.scripts]
+clang-format-docs = "clang_format_docs:main"
+
+[tool.setuptools]
+py-modules = ["clang_format_docs"]
+license-files = [
+    "LICENSE",
+    "LICENSE_blacken_docs",
+]
+include-package-data = false
+
+[tool.distutils.bdist_wheel]
+universal = true
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["testing.*"]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+addopts = "--cov=clang_format_docs --cov-report html --cov-report xml --cov-report term-missing -v"
+testpaths = ["tests"]
+
+
+[tool.bumpversion]
+allow_dirty = false
+commit = true
+message = "Bump version: {current_version} → {new_version}"
+tag = true
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+current_version = "0.3.0"
+
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
