@@ -14,15 +14,15 @@ from typing import Sequence
 
 
 MD_RE = re.compile(
-    r'(?P<before>^(?P<indent> *)```\s*([cC]\+\+|cpp)\n)'
-    r'(?P<code>.*?)'
-    r'(?P<after>^(?P=indent)```\s*$)',
+    r"(?P<before>^(?P<indent> *)```\s*([cC]\+\+|cpp)\n)"
+    r"(?P<code>.*?)"
+    r"(?P<after>^(?P=indent)```\s*$)",
     re.DOTALL | re.MULTILINE,
 )
 
 
-INDENT_RE = re.compile('^ +(?=[^ ])', re.MULTILINE)
-TRAILING_NL_RE = re.compile(r'\n+\Z', re.MULTILINE)
+INDENT_RE = re.compile("^ +(?=[^ ])", re.MULTILINE)
+TRAILING_NL_RE = re.compile(r"\n+\Z", re.MULTILINE)
 
 
 class CodeBlockError(NamedTuple):
@@ -31,12 +31,12 @@ class CodeBlockError(NamedTuple):
 
 
 def get_clang_format_path() -> str:
-    path = shutil.which('clang-format')
+    path = shutil.which("clang-format")
 
     if path is None:
         msg = (
-            'Unable to find clang-format. Make sure clang-format is '
-            'installed and available in your PATH'
+            "Unable to find clang-format. Make sure clang-format is "
+            "installed and available in your PATH"
         )
 
         raise RuntimeError(msg)
@@ -46,19 +46,19 @@ def get_clang_format_path() -> str:
 clang_format = get_clang_format_path()
 
 
-def clang_format_str(code: str, style: str = 'Microsoft') -> str:
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.cpp') as f:
+def clang_format_str(code: str, style: str = "Microsoft") -> str:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".cpp") as f:
         f.file.write(code)
         f.file.close()
-        res = sp.check_output([clang_format, f'--style={style}', f.name])
+        res = sp.check_output([clang_format, f"--style={style}", f.name])
 
     return res.decode()
 
 
 def format_str(
-    src: str, style: str = 'Microsoft',
+    src: str,
+    style: str = "Microsoft",
 ) -> tuple[str, Sequence[CodeBlockError]]:
-
     errors: list[CodeBlockError] = []
 
     @contextlib.contextmanager
@@ -69,11 +69,11 @@ def format_str(
             errors.append(CodeBlockError(match.start(), e))
 
     def _md_match(match: Match[str]) -> str:
-        code = textwrap.dedent(match['code'])
+        code = textwrap.dedent(match["code"])
         with _collect_error(match):
             code = clang_format_str(code, style)
-        code = textwrap.indent(code, match['indent'])
-        return f'{match["before"]}{code}{match["after"]}'
+        code = textwrap.indent(code, match["indent"])
+        return f"{match['before']}{code}{match['after']}"
 
     src = MD_RE.sub(_md_match, src)
     return src, errors
@@ -82,20 +82,20 @@ def format_str(
 def format_file(
     filename: str,
     skip_errors: bool,
-    style: str = 'Microsoft',
+    style: str = "Microsoft",
 ) -> int:
-    with open(filename, encoding='UTF-8') as f:
+    with open(filename, encoding="UTF-8") as f:
         contents = f.read()
     new_contents, errors = format_str(contents, style)
 
     for error in errors:
-        lineno = contents[: error.offset].count('\n') + 1
-        print(f'{filename}:{lineno}: code block parse error {error.exc}')
+        lineno = contents[: error.offset].count("\n") + 1
+        print(f"{filename}:{lineno}: code block parse error {error.exc}")
     if errors and not skip_errors:
         return 1
     if contents != new_contents:
-        print(f'{filename}: Rewriting...')
-        with open(filename, 'w', encoding='UTF-8') as f:
+        print(f"{filename}: Rewriting...")
+        with open(filename, "w", encoding="UTF-8") as f:
             f.write(new_contents)
         return 1
     else:
@@ -104,10 +104,13 @@ def format_file(
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument('-E', '--skip-errors', action='store_true')
-    parser.add_argument('filenames', nargs='*')
+    parser.add_argument("-E", "--skip-errors", action="store_true")
+    parser.add_argument("filenames", nargs="*")
     parser.add_argument(
-        '--style', type=str, default='Microsoft', help=(
+        "--style",
+        type=str,
+        default="Microsoft",
+        help=(
             textwrap.dedent("""
         Coding style, currently supports:
             LLVM, GNU, Google, Chromium, Microsoft (default), Mozilla, WebKit.
@@ -128,10 +131,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     retv = 0
     for filename in args.filenames:
         retv |= format_file(
-            filename, skip_errors=args.skip_errors, style=args.style,
+            filename,
+            skip_errors=args.skip_errors,
+            style=args.style,
         )
     return retv
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     raise SystemExit(main())
