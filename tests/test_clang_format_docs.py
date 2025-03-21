@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import sys
 from unittest import mock
 
 import pytest
 
 import clang_format_docs
+
+WIN = sys.platform.startswith("win")
 
 
 def test_format_src_trivial():
