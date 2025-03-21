@@ -90,3 +90,9 @@ current_version = "0.3.1"
 filename = "pyproject.toml"
 search = 'version = "{current_version}"'
 replace = 'version = "{new_version}"'
+
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+search = 'v{current_version}'
+replace = 'v{new_version}'
