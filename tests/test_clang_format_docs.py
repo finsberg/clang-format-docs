@@ -163,6 +163,9 @@ def test_json(tmpdir, capsys):
     )
 
 
+@pytest.mark.skipif(
+    WIN, reason="clang-format does not produce the same output on Windows"
+)
 def test_csharp(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -177,6 +180,9 @@ def test_csharp(tmpdir, capsys):
     )
 
 
+@pytest.mark.skipif(
+    WIN, reason="clang-format does not produce the same output on Windows"
+)
 def test_java(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
