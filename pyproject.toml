@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clang_format_docs"
-version = "0.3.2"
+version = "0.4.0"
 description = "Run `clang-format` on C++ code blocks in documentation files"
 authors = [{name = "Henrik Finsberg", email = "henriknf@simula.no"}]
 license = {text = "MIT"}
@@ -83,7 +83,7 @@ tag = true
 sign_tags = false
 tag_name = "v{new_version}"
 tag_message = "Bump version: {current_version} → {new_version}"
-current_version = "0.3.2"
+current_version = "0.4.0"
 
 
 [[tool.bumpversion.files]]

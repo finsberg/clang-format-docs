@@ -47,7 +47,7 @@ Sample `.pre-commit-config.yaml`:
 
 ```yaml
 -   repo: https://github.com/finsberg/clang-format-docs
-    rev: v0.3.2
+    rev: v0.4.0
     hooks:
     -   id: clang-format-docs
         additional_dependencies: [clang-format==14.0.6]
