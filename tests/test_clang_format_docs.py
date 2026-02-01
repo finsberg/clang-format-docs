@@ -150,6 +150,55 @@ def test_integration_modifies(tmpdir, capsys):
 @pytest.mark.skipif(
     WIN, reason="clang-format does not produce the same output on Windows"
 )
+def test_json(tmpdir, capsys):
+    f = tmpdir.join("f.md")
+    f.write(
+        '```json\n{"key1":"value1","key2": [1,2,3]}\n```\n',
+    )
+    assert clang_format_docs.main((str(f),))
+    out, _ = capsys.readouterr()
+    assert out == f"{f}: Rewriting...\n"
+    assert f.read() == (
+        '```json\n{\n    "key1" : "value1", "key2" : [ 1, 2, 3 ]\n}\n```\n'
+    )
+
+
+@pytest.mark.skipif(
+    WIN, reason="clang-format does not produce the same output on Windows"
+)
+def test_csharp(tmpdir, capsys):
+    f = tmpdir.join("f.md")
+    f.write(
+        "```csharp\nclass  Test{public void  Method( ){}}\n```\n",
+    )
+    assert clang_format_docs.main((str(f),))
+    out, _ = capsys.readouterr()
+    assert out == f"{f}: Rewriting...\n"
+
+    assert f.read() == (
+        "```csharp\nclass Test\n{\n  public\n    void Method()\n    {\n    }\n}\n```\n"
+    )
+
+
+@pytest.mark.skipif(
+    WIN, reason="clang-format does not produce the same output on Windows"
+)
+def test_java(tmpdir, capsys):
+    f = tmpdir.join("f.md")
+    f.write(
+        "```java\nclass  Test{public void  Method( ){}}\n```\n",
+    )
+    assert clang_format_docs.main((str(f),))
+    out, _ = capsys.readouterr()
+    assert out == f"{f}: Rewriting...\n"
+    assert f.read() == (
+        "```java\nclass Test\n{\n  public\n    void Method()\n    {\n    }\n}\n```\n"
+    )
+
+
+@pytest.mark.skipif(
+    WIN, reason="clang-format does not produce the same output on Windows"
+)
 def test_integration_modifies_different_style(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
