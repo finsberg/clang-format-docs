@@ -150,6 +150,20 @@ def test_integration_modifies(tmpdir, capsys):
 @pytest.mark.skipif(
     WIN, reason="clang-format does not produce the same output on Windows"
 )
+def test_c(tmpdir, capsys):
+    f = tmpdir.join("f.md")
+    f.write(
+        "```c\nvoid f (1,2,3){}\n```\n",
+    )
+    assert clang_format_docs.main((str(f),))
+    out, _ = capsys.readouterr()
+    assert out == f"{f}: Rewriting...\n"
+    assert f.read() == ("```c\nvoid f(1, 2, 3)\n{\n}\n```\n")
+
+
+@pytest.mark.skipif(
+    WIN, reason="clang-format does not produce the same output on Windows"
+)
 def test_json(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(

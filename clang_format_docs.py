@@ -14,7 +14,7 @@ from typing import Sequence
 
 
 MD_RE = re.compile(
-    r"(?i)(?P<before>^(?P<indent> *)```\s*(c\+\+|cpp|json|c#|csharp|java)\n)"
+    r"(?i)(?P<before>^(?P<indent> *)```\s*(c|c\+\+|cpp|json|c#|csharp|java)\n)"
     r"(?P<code>.*?)"
     r"(?P<after>^(?P=indent)```\s*$)",
     re.DOTALL | re.MULTILINE,
