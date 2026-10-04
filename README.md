@@ -50,5 +50,5 @@ Sample `.pre-commit-config.yaml`:
     rev: v0.6.0
     hooks:
     -   id: clang-format-docs
-        additional_dependencies: [clang-format==14.0.6]
+        additional_dependencies: [clang-format==23.1.2]
 ```
