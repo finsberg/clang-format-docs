@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import sys
 from unittest import mock
 
 import pytest
 
 import clang_format_docs
-
-WIN = sys.platform.startswith("win")
 
 
 def test_format_src_trivial():
@@ -15,9 +12,6 @@ def test_format_src_trivial():
     assert after == ""
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_format_src():
     before = (
         "```C++\n"
@@ -54,18 +48,12 @@ def test_format_src():
     assert after == expected
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_format_src_simple():
     before = "```c++\nvoid f (1,2,3){}\n```\n"
     after, _ = clang_format_docs.format_str(before)
     assert after == ("```c++\nvoid f(1, 2, 3)\n{\n}\n```\n")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_cpp_lexer():
     before = "```cpp\nvoid f (1,2,3){}\n```\n"
     after, _ = clang_format_docs.format_str(before)
@@ -82,36 +70,24 @@ def test_clang_format_not_found_raises_RuntimeError():
         m.assert_called_once_with("clang-format")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_format_src_simple_different_style():
     before = "```c++\nvoid f (1,2,3){}\n```\n"
     after, _ = clang_format_docs.format_str(before, style="LLVM")
     assert after == ("```c++\nvoid f(1, 2, 3) {}\n```\n")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_format_src_markdown_leading_whitespace():
     before = "```   c++\nvoid f (1,2,3){}\n```\n"
     after, _ = clang_format_docs.format_str(before)
     assert after == ("```   c++\nvoid f(1, 2, 3)\n{\n}\n```\n")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_format_src_markdown_trailing_whitespace():
     before = "```c++\nvoid f (1,2,3){}\n```    \n"
     after, _ = clang_format_docs.format_str(before)
     assert after == ("```c++\nvoid f(1, 2, 3)\n{\n}\n```    \n")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_format_src_indented_markdown():
     before = "- do this pls:\n  ```c++\n  void f (1,2,3){}\n  ```\n- also this\n"
     after, _ = clang_format_docs.format_str(before)
@@ -120,9 +96,6 @@ def test_format_src_indented_markdown():
     )
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_integration_ok(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -133,9 +106,6 @@ def test_integration_ok(tmpdir, capsys):
     assert f.read() == ("```c++\nvoid f(1, 2, 3)\n{\n}\n```\n")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_integration_modifies(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -147,9 +117,6 @@ def test_integration_modifies(tmpdir, capsys):
     assert f.read() == ("```c++\nvoid f(1, 2, 3)\n{\n}\n```\n")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_c(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -161,9 +128,6 @@ def test_c(tmpdir, capsys):
     assert f.read() == ("```c\nvoid f(1, 2, 3)\n{\n}\n```\n")
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_json(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -177,9 +141,6 @@ def test_json(tmpdir, capsys):
     )
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_csharp(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -194,9 +155,6 @@ def test_csharp(tmpdir, capsys):
     )
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_java(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -210,9 +168,6 @@ def test_java(tmpdir, capsys):
     )
 
 
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_integration_modifies_different_style(tmpdir, capsys):
     f = tmpdir.join("f.md")
     f.write(
@@ -225,9 +180,6 @@ def test_integration_modifies_different_style(tmpdir, capsys):
 
 
 @pytest.mark.xfail
-@pytest.mark.skipif(
-    WIN, reason="clang-format does not produce the same output on Windows"
-)
 def test_integration_syntax_error(tmpdir, capsys):
     # Need to find an example that makes clang-format fail
     f = tmpdir.join("f.md")
