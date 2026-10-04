@@ -7,6 +7,7 @@ import shutil
 import subprocess as sp
 import tempfile
 import textwrap
+from pathlib import Path
 from typing import Generator
 from typing import Match
 from typing import NamedTuple
@@ -47,12 +48,25 @@ clang_format = get_clang_format_path()
 
 
 def clang_format_str(code: str, style: str = "Microsoft") -> str:
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".cpp") as f:
-        f.file.write(code)
-        f.file.close()
-        res = sp.check_output([clang_format, f"--style={style}", f.name])
+    code_block_bytes = code.encode("utf-8")
 
-    return res.decode()
+    with tempfile.NamedTemporaryFile(suffix=".cpp", delete=False) as tmp:
+        tmp.write(code_block_bytes)
+        tmp_name = Path(tmp.name)
+
+    try:
+        # Run clang-format on the closed file
+        sp.check_output([clang_format, "-i", f"--style={style}", str(tmp_name)])
+
+        # Read the newly formatted output
+        formatted_output = tmp_name.read_text(encoding="utf-8")
+
+    finally:
+        # Clean up the file manually
+        if tmp_name.exists():
+            tmp_name.unlink()
+
+    return formatted_output
 
 
 def format_str(
